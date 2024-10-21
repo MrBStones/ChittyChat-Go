@@ -1,9 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"log"
 )
 
 func main() {
-	fmt.Println("helloWorld")
+	log.Println("Select Name:")
+}
+
+func Publish(message string) {
+	log.Println("message: ", message)
 }

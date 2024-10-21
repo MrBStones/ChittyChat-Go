@@ -1,0 +1,17 @@
+syntax = "proto3";
+option go_package = "ChittyChat-Go.stc";
+
+service ChittyChat {
+    rpc Chat (stream ChatMessage) returns (stream ChatMessage) {}
+}
+
+message ChatMessage {
+    // the message
+    string message = 1;
+
+    // the user who is joining the chat
+    string user = 2;
+
+    // the logical timestamp of the message
+    int32 logicaltimestamp = 3;
+}

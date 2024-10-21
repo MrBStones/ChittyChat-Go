@@ -1,9 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"log"
 )
 
 func main() {
-	fmt.Println("helloWorld")
+
+}
+
+func broadcast() {
+	log.Println("broadcasting")
+}
+
+func GetLamportTimestamp() int {
+	return 0
 }
