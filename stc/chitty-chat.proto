@@ -2,7 +2,7 @@ syntax = "proto3";
 option go_package = "ChittyChat-Go.stc";
 
 service ChittyChat {
-    rpc Publish (ChatMessage) returns (ChatMessage) {}
+    rpc Publish (ChatMessage) returns (PublishResponse) {}
     rpc Broadcast (User) returns (stream ChatMessage) {}
 }
 
@@ -15,9 +15,22 @@ message ChatMessage {
 
     // the logical timestamp of the message
     int32 logicaltimestamp = 3;
+
+    // the success state
+    bool success = 4;
 }
 
 message User {
     // the user who is joining the chat
     string user = 1;
+
+    // the logical timestamp of the user
+    int32 logicaltimestamp = 2;
+}
+
+message PublishResponse {
+    bool success = 1;
+
+    // the logical timestamp of the message
+    int32 logicaltimestamp = 2;
 }
