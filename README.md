@@ -23,7 +23,7 @@ Chitty-Chat is a distributed chat service built using gRPC and Go. The system su
     ```
 3. Run the server:
     ```bash
-    ./server.go
+    ./server
     ```
 
 ### Running the Client
@@ -34,7 +34,7 @@ Chitty-Chat is a distributed chat service built using gRPC and Go. The system su
     ```
 3. Run the client with a unique participant name:
     ```bash
-    ./client.go <participant_name>
+    ./client <participant_name>
     ```
 
     Example:
