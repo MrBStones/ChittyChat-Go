@@ -25,12 +25,13 @@ func (s *ChittyChatServer) Broadcast(usr *pb.User, stream pb.ChittyChat_Broadcas
 	s.mu.Lock()
 	s.participants[usr.User] = stream
 	s.lamporttime = max(int(usr.Logicaltimestamp), int(s.lamporttime)) + 1
+	log.Printf("Participant %s joined Chitty-Chat at Lamport time %d", usr.User, s.lamporttime)
+	s.lamporttime++
 	joinMessage := &pb.ChatMessage{
 		Message:          fmt.Sprintf("Participant %s joined Chitty-Chat at Lamport time %d", usr.User, s.lamporttime),
 		User:             usr.User,
 		Logicaltimestamp: int32(s.lamporttime),
 	}
-	log.Printf("Participant %s joined Chitty-Chat at Lamport time %d", usr.User, s.lamporttime)
 	for _, participantStream := range s.participants {
 		if err := participantStream.Send(joinMessage); err != nil {
 			log.Printf("error sending join message to %s", usr.User)
@@ -66,14 +67,19 @@ func (s *ChittyChatServer) Publish(ctx context.Context, message *pb.ChatMessage)
 		s.mu.Unlock()
 		return &pb.PublishResponse{Success: false}, fmt.Errorf("message exceeds 128 characters")
 	}
+	s.lamporttime++
+	newmsg := &pb.ChatMessage{
+		Message:          message.Message,
+		User:             message.User,
+		Logicaltimestamp: int32(s.lamporttime),
+	}
 	for _, participantStream := range s.participants {
-		if err := participantStream.Send(message); err != nil {
-			log.Printf("error sending message to %s", message.User)
+		if err := participantStream.Send(newmsg); err != nil {
+			log.Printf("error sending message from %s", message.User)
 		}
 	}
 	s.mu.Unlock()
-	s.lamporttime++
-	log.Println("from:", message.User, "; message:", message.Message, "; timestamp:", message.Logicaltimestamp)
+	log.Println("from:", newmsg.User, "; message:", newmsg.Message, "; timestamp:", newmsg.Logicaltimestamp)
 	return &pb.PublishResponse{Success: true, Logicaltimestamp: int32(s.lamporttime)}, nil
 }
 

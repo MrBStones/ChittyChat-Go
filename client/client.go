@@ -22,10 +22,16 @@ var (
 func Broadcast(cl pb.ChittyChatClient) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	mu.Lock()
+	lamporttimestamp++
+	mu.Unlock()
+
 	stream, err := cl.Broadcast(ctx, &pb.User{User: name, Logicaltimestamp: int32(lamporttimestamp)})
 	if err != nil {
 		return err
 	}
+
 	for {
 		msg, err := stream.Recv()
 		if err != nil {
@@ -33,10 +39,7 @@ func Broadcast(cl pb.ChittyChatClient) error {
 		}
 
 		mu.Lock()
-		if int(msg.Logicaltimestamp) > lamporttimestamp {
-			lamporttimestamp = int(msg.Logicaltimestamp)
-		}
-		lamporttimestamp++
+		lamporttimestamp = max(int(lamporttimestamp), int(msg.Logicaltimestamp)) + 1
 		mu.Unlock()
 
 		log.Println("User:", msg.User, "; Message:", msg.Message, "; Lamport:", msg.Logicaltimestamp)
