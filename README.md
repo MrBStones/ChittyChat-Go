@@ -41,6 +41,3 @@ Chitty-Chat is a distributed chat service built using gRPC and Go. The system su
     ```bash
     ./client Alice
     ```
-
-## Contributing
-Feel free to fork this repository and open pull requests for any improvements.
